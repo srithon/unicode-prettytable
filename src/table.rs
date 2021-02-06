@@ -89,31 +89,42 @@ where
             .collect::<Vec<_>>()
     };
 
-    macro_rules! push_sep_row {
-        ($left_char:expr, $middle_char:expr, $right_char:expr, $newline:expr) => {{
-            buffer.push_chars($left_char);
+    let create_sep_row = |left_char, middle_char, right_char, newline| {
+        let mut sep_buffer = {
+            // allocate one extra byte if there is a newline at the end
+            let newline_increment = if newline { 1 } else { 0 };
+            let capacity = total_width_per_row + newline_increment;
+            StringBuffer::with_capacity(capacity)
+        };
 
-            let (last_sep, seps) = horizontal_separators.split_last().unwrap();
+        sep_buffer.push_chars(left_char);
 
-            // TODO remove length
-            for (sep, _) in seps {
-                buffer.push_bytes(sep);
-                buffer.push_chars($middle_char);
-            }
+        let (last_sep, seps) = horizontal_separators.split_last().unwrap();
 
-            buffer.push_bytes(&last_sep.0);
-            buffer.push_chars($right_char);
+        // TODO remove length
+        for (sep, _) in seps {
+            sep_buffer.push_bytes(sep);
+            sep_buffer.push_chars(middle_char);
+        }
 
-            if $newline {
-                buffer.push_chars("\n")
-            }
-        }}
-    }
+        sep_buffer.push_bytes(&last_sep.0);
+        sep_buffer.push_chars(right_char);
+
+        if newline {
+            sep_buffer.push_chars("\n")
+        }
+
+        sep_buffer.into_buffer()
+    };
 
     let mut input_iterator = input.into_iter().peekable();
 
+    let header = create_sep_row(TOP_LEFT_CORNER, TOP_BRACE, TOP_RIGHT_CORNER, true);
+    let standard_separator = create_sep_row(LEFT_BRACE, MIDDLE_BRACE, RIGHT_BRACE, true);
+    let footer = create_sep_row(BOTTOM_LEFT_CORNER, BOTTOM_BRACE, BOTTOM_RIGHT_CORNER, false);
+
     // add header
-    push_sep_row!(TOP_LEFT_CORNER, TOP_BRACE, TOP_RIGHT_CORNER, true);
+    buffer.push_bytes(&header);
 
     loop {
         if let Some(row) = input_iterator.next() {
@@ -132,8 +143,7 @@ where
 
         // only create a standard separator row if there are more data rows
         if input_iterator.peek().is_some() {
-            // TODO create a constant for this separator row
-            push_sep_row!(LEFT_BRACE, MIDDLE_BRACE, RIGHT_BRACE, true);
+            buffer.push_bytes(&standard_separator);
         }
         else {
             // break out if there are no more data rows
@@ -142,7 +152,7 @@ where
     }
 
     // add footer
-    push_sep_row!(BOTTOM_LEFT_CORNER, BOTTOM_BRACE, BOTTOM_RIGHT_CORNER, false);
+    buffer.push_bytes(&footer);
 
     buffer.to_string()
 }
