@@ -11,7 +11,7 @@ pub struct StringBuffer {
 
 impl StringBuffer {
     /// Returns a StringBuffer with a given capacity
-    pub fn new_with_char(num_chars: usize, fill_char: char) -> StringBuffer {
+    pub fn with_capacity_fill(num_chars: usize, fill_char: char) -> StringBuffer {
         // TODO refine this
         let buffer = fill_char.to_string().into_bytes().repeat(num_chars * 4);
 
@@ -19,7 +19,7 @@ impl StringBuffer {
     }
 
     /// Creates a new string buffer with the given capacity
-    pub fn new(num_chars: usize) -> StringBuffer {
+    pub fn with_capacity(num_chars: usize) -> StringBuffer {
         StringBuffer {
             buffer: Vec::with_capacity(num_chars),
             index: 0,

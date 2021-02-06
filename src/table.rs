@@ -79,7 +79,7 @@ where
     };
 
     // fill string with spaces
-    let mut buffer = StringBuffer::new_with_char(string_length, ' ');
+    let mut buffer = StringBuffer::with_capacity_fill(string_length, ' ');
 
     let horizontal_separators = {
         let horizontal_separator: String = HORIZONTAL.to_string();
