@@ -89,12 +89,6 @@ where
             .collect::<Vec<_>>()
     };
 
-    macro_rules! push_column_str {
-        ($string:expr, $column_index:expr) => {
-            buffer.push_chars_fixed_width($string, column_widths[$column_index])
-        };
-    }
-
     macro_rules! push_sep_row {
         ($left_char:expr, $middle_char:expr, $right_char:expr, $newline:expr) => {{
             buffer.push_chars($left_char);
@@ -126,7 +120,7 @@ where
                     // NOTE
                     // this is why we wanted a byte buffer
                     // so we dont have to rely on the slow chars() implementation
-                    push_column_str!(col.as_ref(), col_index);
+                    buffer.push_chars_fixed_width(col.as_ref(), column_widths[col_index]);
                     buffer.push_chars(VERTICAL);
                     // buffer.push_single_char(" ");
                 }
