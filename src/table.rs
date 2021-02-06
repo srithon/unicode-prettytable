@@ -85,7 +85,7 @@ where
         let horizontal_separator: String = HORIZONTAL.to_string();
         column_widths
             .iter()
-            .map(|&length| (horizontal_separator.repeat(length).into_bytes(), length))
+            .map(|&length| horizontal_separator.repeat(length).into_bytes())
             .collect::<Vec<_>>()
     };
 
@@ -101,13 +101,12 @@ where
 
         let (last_sep, seps) = horizontal_separators.split_last().unwrap();
 
-        // TODO remove length
-        for (sep, _) in seps {
+        for sep in seps {
             sep_buffer.push_bytes(sep);
             sep_buffer.push_chars(middle_char);
         }
 
-        sep_buffer.push_bytes(&last_sep.0);
+        sep_buffer.push_bytes(&last_sep);
         sep_buffer.push_chars(right_char);
 
         if newline {
