@@ -16,40 +16,46 @@ const TOP_RIGHT_CORNER: &str = "\u{2510}"; // ┐
 const BOTTOM_RIGHT_CORNER: &str = "\u{2518}"; // ┘
 const BOTTOM_LEFT_CORNER: &str = "\u{2514}"; // └
 
-pub fn table_to_string<'a, T: 'a>(input: Vec<Vec<T>>) -> String
+fn get_column_widths<'a, T: 'a>(input: &Vec<Vec<T>>) -> Vec<usize>
 where
     T: AsRef<str>,
-    &'a T: AsRef<str>,
+    &'a T: AsRef<str>
 {
     let num_columns = {
         if let Some(row) = input.get(0) {
             row.len()
         }
         else {
-            return String::new();
+            return Vec::new();
         }
     };
 
-    let column_widths = {
-        input
-        .iter()
-        .map(|row| row
-            .into_iter()
-            .map(|entry| entry.as_ref().len())
-        )
-        .fold(vec![0; num_columns], |mut column_widths, row| {
-            for (a, b) in column_widths.iter_mut().zip(row) {
-                // if b is bigger than the current column width, set the new column width to b
-                *a = b.max(*a);
-            }
+    input
+    .iter()
+    .map(|row| row
+        .into_iter()
+        .map(|entry| entry.as_ref().len())
+    )
+    .fold(vec![0; num_columns], |mut column_widths, row| {
+        for (a, b) in column_widths.iter_mut().zip(row) {
+            // if b is bigger than the current column width, set the new column width to b
+            *a = b.max(*a);
+        }
 
-            column_widths
-        })
-    };
+        column_widths
+    })
+}
+
+pub fn table_to_string<'a, T: 'a>(input: Vec<Vec<T>>) -> String
+where
+    T: AsRef<str>,
+    &'a T: AsRef<str>,
+{
+    let column_widths = get_column_widths(&input);
 
     let total_width_per_row = {
         // one separator to the left of each one, as well as one separator on the very right
-        let num_separators_per_row = num_columns + 1;
+        let num_separators_per_row = column_widths.len() + 1;
 
         let base_width_per_row: usize = column_widths.iter().sum();
 
