@@ -112,33 +112,23 @@ where
 
     let mut input_iterator = input.into_iter().peekable();
 
-    macro_rules! write_data_row {
-        () => {
-            if let Some(row) = input_iterator.next() {
-                buffer.push_chars(VERTICAL);
-                for (col_index, col) in row.into_iter().enumerate() {
-                    // NOTE
-                    // this is why we wanted a byte buffer
-                    // so we dont have to rely on the slow chars() implementation
-                    buffer.push_chars_fixed_width(col.as_ref(), column_widths[col_index]);
-                    buffer.push_chars(VERTICAL);
-                    // buffer.push_single_char(" ");
-                }
-
-                buffer.push_chars("\n");
-
-                true
-            } else {
-                false
-            }
-        };
-    };
-
     // add header
     push_sep_row!(TOP_LEFT_CORNER, TOP_BRACE, TOP_RIGHT_CORNER, true);
 
     loop {
-        write_data_row!();
+        if let Some(row) = input_iterator.next() {
+            buffer.push_chars(VERTICAL);
+            for (col_index, col) in row.into_iter().enumerate() {
+                // NOTE
+                // this is why we wanted a byte buffer
+                // so we dont have to rely on the slow chars() implementation
+                buffer.push_chars_fixed_width(col.as_ref(), column_widths[col_index]);
+                buffer.push_chars(VERTICAL);
+                // buffer.push_single_char(" ");
+            }
+
+            buffer.push_chars("\n");
+        }
 
         // only create a standard separator row if there are more data rows
         if input_iterator.peek().is_some() {
