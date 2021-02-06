@@ -64,6 +64,13 @@ impl StringBuffer {
     pub fn push_chars_fixed_width(&mut self, c: &str, num_chars: usize) {
         self.push_bytes_fixed_width(c.as_bytes(), num_chars)
     }
+
+    /// Consumes the StringBuffer and returns the internal byte buffer
+    pub fn into_buffer(mut self) -> Vec<u8> {
+        // remove extra padding before returning
+        self.buffer.truncate(self.index);
+        self.buffer
+    }
 }
 
 impl std::fmt::Display for StringBuffer {
