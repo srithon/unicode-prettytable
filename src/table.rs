@@ -42,6 +42,15 @@ where T: AsRef<str>,
         })
     };
 
+    let total_width_per_row = {
+        // one separator to the left of each one, as well as one separator on the very right
+        let num_separators_per_row = num_columns + 1;
+
+        let base_width_per_row: usize = column_widths.iter().sum();
+
+        base_width_per_row + num_separators_per_row
+    };
+
     let string_length = {
         let total_lines = {
             let num_rows = input.len();
@@ -54,15 +63,6 @@ where T: AsRef<str>,
 
         // no newline after the last line
         let num_newlines = total_lines - 1;
-
-        let total_width_per_row = {
-            // one separator to the left of each one, as well as one separator on the very right
-            let num_separators_per_row = num_columns + 1;
-
-            let base_width_per_row: usize = column_widths.iter().sum();
-
-            base_width_per_row + num_separators_per_row
-        };
 
         (total_width_per_row * total_lines) + num_newlines
     };
