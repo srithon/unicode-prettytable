@@ -10,7 +10,8 @@ pub struct StringBuffer {
 }
 
 impl StringBuffer {
-    /// Returns a StringBuffer with a given capacity
+    /// Returns a StringBuffer with a given capacity, and fills the starting buffer with a certain
+    /// character
     pub fn with_capacity_fill(num_chars: usize, fill_char: char) -> StringBuffer {
         // TODO refine this
         let buffer = fill_char.to_string().into_bytes().repeat(num_chars * 4);
