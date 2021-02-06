@@ -1,21 +1,26 @@
+use crate::util::StringBuffer;
+
 // https://www.unicode.org/charts/PDF/U2500.pdf
-const HORIZONTAL: char = '\u{2500}'; // ─
-const VERTICAL: char = '\u{2502}'; // │
+const VERTICAL: &str = "\u{2502}"; // │
 
-const TOP_BRACE: char = '\u{252C}'; // ┬
-const BOTTOM_BRACE: char = '\u{2534}'; // ┴
-const LEFT_BRACE: char = '\u{251c}'; // ├
-const RIGHT_BRACE: char = '\u{2524}'; // ┤
-const MIDDLE_BRACE: char = '\u{253C}'; // ┤
+const HORIZONTAL: &str = "\u{2500}"; // ─
 
-const TOP_LEFT_CORNER: char = '\u{250c}'; // ┌
-const TOP_RIGHT_CORNER: char = '\u{2510}'; // ┐
-const BOTTOM_RIGHT_CORNER: char = '\u{2518}'; // ┘
-const BOTTOM_LEFT_CORNER: char = '\u{2514}'; // └
+const TOP_BRACE: &str = "\u{252C}"; // ┬
+const BOTTOM_BRACE: &str = "\u{2534}"; // ┴
+const LEFT_BRACE: &str = "\u{251c}"; // ├
+const RIGHT_BRACE: &str = "\u{2524}"; // ┤
+const MIDDLE_BRACE: &str = "\u{253C}"; // ┤
+
+const TOP_LEFT_CORNER: &str = "\u{250c}"; // ┌
+const TOP_RIGHT_CORNER: &str = "\u{2510}"; // ┐
+const BOTTOM_RIGHT_CORNER: &str = "\u{2518}"; // ┘
+const BOTTOM_LEFT_CORNER: &str = "\u{2514}"; // └
 
 pub fn table_to_string<'a, T: 'a>(input: Vec<Vec<T>>) -> String
-where T: AsRef<str>,
-      &'a T: AsRef<str> {
+where
+    T: AsRef<str>,
+    &'a T: AsRef<str>,
+{
     let num_columns = {
         if let Some(row) = input.get(0) {
             row.len()
@@ -67,10 +72,87 @@ where T: AsRef<str>,
         (total_width_per_row * total_lines) + num_newlines
     };
 
-    let mut string = String::with_capacity(string_length);
+    // fill string with spaces
+    let mut buffer = StringBuffer::new_with_char(string_length, ' ');
 
-    println!("String Length: {}", string_length);
+    let horizontal_separators = {
+        let horizontal_separator: String = HORIZONTAL.to_string();
+        column_widths
+            .iter()
+            .map(|&length| (horizontal_separator.repeat(length).into_bytes(), length))
+            .collect::<Vec<_>>()
+    };
 
-    // TODO
-    string
+    macro_rules! push_column_str {
+        ($string:expr, $column_index:expr) => {
+            buffer.push_chars_fixed_width($string, column_widths[$column_index])
+        };
+    }
+
+    macro_rules! push_sep_row {
+        ($left_char:expr, $middle_char:expr, $right_char:expr, $newline:expr) => {{
+            buffer.push_chars($left_char);
+
+            let (last_sep, seps) = horizontal_separators.split_last().unwrap();
+
+            // TODO remove length
+            for (sep, _) in seps {
+                buffer.push_bytes(sep);
+                buffer.push_chars($middle_char);
+            }
+
+            buffer.push_bytes(&last_sep.0);
+            buffer.push_chars($right_char);
+
+            if $newline {
+                buffer.push_chars("\n")
+            }
+        }}
+    }
+
+    let mut input_iterator = input.into_iter().peekable();
+
+    macro_rules! write_data_row {
+        () => {
+            if let Some(row) = input_iterator.next() {
+                buffer.push_chars(VERTICAL);
+                for (col_index, col) in row.into_iter().enumerate() {
+                    // NOTE
+                    // this is why we wanted a byte buffer
+                    // so we dont have to rely on the slow chars() implementation
+                    push_column_str!(col.as_ref(), col_index);
+                    buffer.push_chars(VERTICAL);
+                    // buffer.push_single_char(" ");
+                }
+
+                buffer.push_chars("\n");
+
+                true
+            } else {
+                false
+            }
+        };
+    };
+
+    // add header
+    push_sep_row!(TOP_LEFT_CORNER, TOP_BRACE, TOP_RIGHT_CORNER, true);
+
+    loop {
+        write_data_row!();
+
+        // only create a standard separator row if there are more data rows
+        if input_iterator.peek().is_some() {
+            // TODO create a constant for this separator row
+            push_sep_row!(LEFT_BRACE, MIDDLE_BRACE, RIGHT_BRACE, true);
+        }
+        else {
+            // break out if there are no more data rows
+            break;
+        }
+    }
+
+    // add footer
+    push_sep_row!(BOTTOM_LEFT_CORNER, BOTTOM_BRACE, BOTTOM_RIGHT_CORNER, false);
+
+    buffer.to_string()
 }
