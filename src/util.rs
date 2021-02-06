@@ -22,7 +22,7 @@ impl StringBuffer {
     /// Creates a new string buffer with the given capacity
     pub fn with_capacity(num_chars: usize) -> StringBuffer {
         StringBuffer {
-            buffer: Vec::with_capacity(num_chars),
+            buffer: vec![0; num_chars * 4],
             index: 0,
         }
     }
