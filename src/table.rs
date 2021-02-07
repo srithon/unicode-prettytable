@@ -34,6 +34,7 @@ fn generate_horizontal_separators(column_widths: &Vec<usize>, horizontal_char: &
         .collect::<Vec<_>>()
 }
 
+/// Given a 2D input, returns the minimum width of each column in a vector
 fn get_column_widths<'a, T: 'a>(input: &Vec<Vec<T>>) -> Vec<usize>
 where
     T: AsRef<str>,
@@ -64,6 +65,7 @@ where
     })
 }
 
+/// Given a 2D vector of (coercable) str's, returns a string representing the data in a table
 pub fn table_to_string<'a, T: 'a>(input: Vec<Vec<T>>, first_row_header: bool) -> String
 where
     T: AsRef<str>,
