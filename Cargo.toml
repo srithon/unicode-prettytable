@@ -8,6 +8,10 @@ repository = "https://github.com/srithon/unicode-prettytable"
 license = "MIT OR Apache-2.0"
 keywords = ["unicode", "format", "library"]
 categories = ["value-formatting"]
+include = [
+  "**/*.rs",
+  "Cargo.toml"
+]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
