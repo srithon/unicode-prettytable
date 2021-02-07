@@ -94,12 +94,12 @@ where
 }
 
 /// Given a 2D vector of (coercable) str's, returns a string representing the data in a table
-pub fn table_to_string<'a, T: 'a>(input: Vec<Vec<T>>, first_row_header: bool) -> String
+pub fn table_to_string<'a, T: 'a>(input: Vec<Vec<T>>, first_row_header: bool, center_headers: bool) -> String
 where
     T: AsRef<str>,
     &'a T: AsRef<str>,
 {
-    let column_widths = get_column_widths(&input);
+    let column_widths = get_column_widths(&input, center_headers);
 
     let total_width_per_row = {
         // one separator to the left of each one, as well as one separator on the very right
@@ -162,11 +162,13 @@ where
     let mut input_iterator = input.into_iter().peekable();
 
     macro_rules! push_data_row {
-        () => {
+        ($col_formatter:expr) => {
             if let Some(row) = input_iterator.next() {
                 buffer.push_chars(VERTICAL);
                 for (col_index, col) in row.into_iter().enumerate() {
-                    buffer.push_chars_fixed_width(col.as_ref(), column_widths[col_index]);
+                    let base = col.as_ref();
+
+                    buffer.push_chars_fixed_width($col_formatter(base, column_widths[col_index]).as_ref(), column_widths[col_index]);
                     buffer.push_chars(VERTICAL);
                 }
 
@@ -179,7 +181,12 @@ where
         let header_top = create_sep_row(&header_horizontal_separators, TOP_LEFT_CORNER_HEADER, TOP_BRACE_HEADER, TOP_RIGHT_CORNER_HEADER, true);
         buffer.push_bytes(&header_top);
 
-        push_data_row!();
+        if center_headers {
+            push_data_row!(|base_str, width| format!("{:^width$}", base_str, width = width));
+        }
+        else {
+            push_data_row!(|base_str, _| base_str);
+        }
 
         let header_bottom = create_sep_row(&header_horizontal_separators, LEFT_BRACE_HEADER, MIDDLE_BRACE_HEADER, RIGHT_BRACE_HEADER, true);
         buffer.push_bytes(&header_bottom);
@@ -194,7 +201,7 @@ where
     let footer = create_sep_row(&standard_horizontal_separators, BOTTOM_LEFT_CORNER, BOTTOM_BRACE, BOTTOM_RIGHT_CORNER, false);
 
     loop {
-        push_data_row!();
+        push_data_row!(|base_str, _| base_str);
 
         // only create a standard separator row if there are more data rows
         if input_iterator.peek().is_some() {
