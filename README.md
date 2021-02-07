@@ -1,7 +1,7 @@
 Rust table formatting library using Unicode Box-drawing characters.
 
-![Crates.io](https://img.shields.io/crates/v/unicode-prettytable)
-![docs.rs](https://img.shields.io/docsrs/unicode-prettytable)
+[![Crates.io](https://img.shields.io/crates/v/unicode-prettytable)](https://crates.io/crates/unicode-prettytable)
+[![docs.rs](https://img.shields.io/docsrs/unicode-prettytable)](https://docs.rs/unicode-prettytable)
 
 ## Example usage
 
