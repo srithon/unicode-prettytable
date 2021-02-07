@@ -6,9 +6,9 @@ Rust table formatting library using Unicode Box-drawing characters.
 ## Example usage
 
 ```rust
-use unicode_prettytable::table_to_string;
+use unicode_prettytable::*;
 
-fn main() {
+fn main() -> Result<(), String> {
     let input = vec![
         vec!["oh hello there", "hello there", "hello"],
         vec!["hello there", "oh hello there", "hello"],
@@ -17,11 +17,38 @@ fn main() {
         vec!["oh hello there", "hello there", "hello"],
     ];
 
-    // treats first row as fancy header with each header centered within the column
-    println!("{}\n", table_to_string(input.clone(), true, true));
+    // uses double bar characters for header and centers text within columns
+    let table1 = TableBuilder::default()
+        .header(
+            HeaderBuilder::default()
+                .double_bar(true)
+                .centered_text(true)
+                .build()?
+        )
+        .rows(&input)
+        .build()?;
 
-    // does not treat first row as fancy header and does not center header text
-    println!("{}", table_to_string(input, false, false));
+    // does not use double bar characters for header, but centers header text within columns
+    let table2 = TableBuilder::default()
+        .header(
+            HeaderBuilder::default()
+                .double_bar(false)
+                .centered_text(true)
+                .build()?
+        )
+        .rows(&input)
+        .build()?;
+
+    // uses default header settings
+    let table3 = TableBuilder::default()
+        .rows(&input)
+        .build()?;
+
+    println!("{}\n", table1);
+    println!("{}\n", table2);
+    println!("{}", table3);
+
+    Ok(())
 }
 ```
 
@@ -30,6 +57,18 @@ The code above outputs
 ╒══════════════════╤═══════════════╤═══════════╕
 │  oh hello there  │  hello there  │   hello   │
 ╞══════════════════╪═══════════════╪═══════════╡
+│hello there       │oh hello there │hello      │
+├──────────────────┼───────────────┼───────────┤
+│oh hello there    │hello          │hello there│
+├──────────────────┼───────────────┼───────────┤
+│oh hello there    │hello there    │hello      │
+├──────────────────┼───────────────┼───────────┤
+│oh hello there    │hello there    │hello      │
+└──────────────────┴───────────────┴───────────┘
+
+┌──────────────────┬───────────────┬───────────┐
+│  oh hello there  │  hello there  │   hello   │
+├──────────────────┼───────────────┼───────────┤
 │hello there       │oh hello there │hello      │
 ├──────────────────┼───────────────┼───────────┤
 │oh hello there    │hello          │hello there│
