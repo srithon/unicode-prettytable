@@ -1,5 +1,7 @@
 use crate::util::StringBuffer;
 
+use derive_builder::Builder;
+
 // https://www.unicode.org/charts/PDF/U2500.pdf
 const VERTICAL: &str = "\u{2502}"; // │
 
@@ -32,6 +34,27 @@ fn generate_horizontal_separators(column_widths: &Vec<usize>, horizontal_char: &
         .iter()
         .map(|&length| horizontal_char.repeat(length).into_bytes())
         .collect::<Vec<_>>()
+}
+
+#[derive(Builder, Clone)]
+pub struct Header {
+    /// Whether to use double bar Unicode characters surrounding the header
+    double_bar: bool,
+    /// Whether to center the header text within each column
+    centered_text: bool,
+}
+
+#[derive(Builder)]
+pub struct Table<'a, T>
+where
+    T: AsRef<str>,
+    &'a T: AsRef<str>,
+{
+    /// If you provide header settings, the first row will be treated as headers
+    #[builder(default, setter(strip_option))]
+    header: Option<Header>,
+    /// Rows holding the data
+    rows: &'a Vec<Vec<T>>,
 }
 
 /// Given a 2D input, returns the minimum width of each column in a vector
