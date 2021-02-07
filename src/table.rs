@@ -4,15 +4,25 @@ use crate::util::StringBuffer;
 const VERTICAL: &str = "\u{2502}"; // │
 
 const HORIZONTAL: &str = "\u{2500}"; // ─
+const HORIZONTAL_HEADER: &str = "\u{2550}"; // ═
 
 const TOP_BRACE: &str = "\u{252C}"; // ┬
+const TOP_BRACE_HEADER: &str = "\u{2564}"; // ╤
+
 const BOTTOM_BRACE: &str = "\u{2534}"; // ┴
 const LEFT_BRACE: &str = "\u{251c}"; // ├
+const LEFT_BRACE_HEADER: &str = "\u{255e}"; // ╞
 const RIGHT_BRACE: &str = "\u{2524}"; // ┤
-const MIDDLE_BRACE: &str = "\u{253C}"; // ┤
+const RIGHT_BRACE_HEADER: &str = "\u{2561}"; // ╡
+const MIDDLE_BRACE: &str = "\u{253C}"; // ┼
+const MIDDLE_BRACE_HEADER: &str = "\u{256a}"; // ╪
 
 const TOP_LEFT_CORNER: &str = "\u{250c}"; // ┌
 const TOP_RIGHT_CORNER: &str = "\u{2510}"; // ┐
+
+const TOP_LEFT_CORNER_HEADER: &str = "\u{2552}"; // ╒
+const TOP_RIGHT_CORNER_HEADER: &str = "\u{2555}"; // ╕
+
 const BOTTOM_RIGHT_CORNER: &str = "\u{2518}"; // ┘
 const BOTTOM_LEFT_CORNER: &str = "\u{2514}"; // └
 
