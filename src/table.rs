@@ -182,6 +182,7 @@ where
         buffer.push_bytes(&header_top);
 
         if center_headers {
+            // align header text in the center of each column
             push_data_row!(|base_str, width| format!("{:^width$}", base_str, width = width));
         }
         else {
