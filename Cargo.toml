@@ -3,6 +3,7 @@ name = "unicode-prettytable"
 version = "0.1.0"
 authors = ["Sridaran Thoniyil <sri7thon@gmail.com>"]
 edition = "2018"
+description = "Table formatting library using Unicode Box-drawing characters"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
