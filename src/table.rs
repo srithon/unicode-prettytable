@@ -29,7 +29,7 @@ const TOP_RIGHT_CORNER_HEADER: &str = "\u{2555}"; // ╕
 const BOTTOM_RIGHT_CORNER: &str = "\u{2518}"; // ┘
 const BOTTOM_LEFT_CORNER: &str = "\u{2514}"; // └
 
-#[derive(Builder, Clone)]
+#[derive(Builder, Clone, Default)]
 pub struct Header {
     /// Whether to use double bar Unicode characters surrounding the header
     double_bar: bool,
@@ -44,8 +44,8 @@ where
     &'a T: AsRef<str>,
 {
     /// If you provide header settings, the first row will be treated as headers
-    #[builder(default, setter(strip_option))]
-    header: Option<Header>,
+    #[builder(default)]
+    header: Header,
     /// Rows holding the data
     rows: &'a Vec<Vec<T>>,
 }
@@ -69,13 +69,10 @@ where
         T: AsRef<str>,
         &'a T: AsRef<str>
     {
-        // default to false if there are no header settings
-        let center_headers = self.header.as_ref().map(|settings| settings.centered_text).unwrap_or(false);
-
         let header_widths: Vec<usize> = {
             if let Some(row) = self.rows.get(0) {
                 let header_padding = {
-                    if center_headers {
+                    if self.header.centered_text {
                         2
                     }
                     else {
@@ -106,7 +103,7 @@ where
                 column_widths
             });
 
-        if center_headers {
+        if self.header.centered_text {
             // make sure that header has an even number of spaces on either side
             for (col_width, header_width) in widths.iter_mut().zip(header_widths.into_iter()) {
                 let num_spaces = *col_width - header_width;
@@ -210,28 +207,45 @@ where
             }
         }
 
-        if first_row_header {
+        let standard_separator = create_sep_row(&standard_horizontal_separators, LEFT_BRACE, MIDDLE_BRACE, RIGHT_BRACE, true);
+
+        macro_rules! push_header_data_row {
+            () => (
+                if self.header.centered_text {
+                    // align header text in the center of each column
+                    push_data_row!(|base_str, width| format!("{:^width$}", base_str, width = width));
+                }
+                else {
+                    push_data_row!(|base_str, _| base_str);
+                }
+            )
+        }
+
+        if self.header.double_bar {
             let header_top = create_sep_row(&header_horizontal_separators, TOP_LEFT_CORNER_HEADER, TOP_BRACE_HEADER, TOP_RIGHT_CORNER_HEADER, true);
             buffer.push_bytes(&header_top);
 
-            if center_headers {
-                // align header text in the center of each column
-                push_data_row!(|base_str, width| format!("{:^width$}", base_str, width = width));
-            }
-            else {
-                push_data_row!(|base_str, _| base_str);
-            }
+            push_header_data_row!();
 
             let header_bottom = create_sep_row(&header_horizontal_separators, LEFT_BRACE_HEADER, MIDDLE_BRACE_HEADER, RIGHT_BRACE_HEADER, true);
             buffer.push_bytes(&header_bottom);
+
+            // TODO
+            // handle case where there are no remaining rows
+            // currently, it will output an empty body
         }
         else {
             let header = create_sep_row(&standard_horizontal_separators, TOP_LEFT_CORNER, TOP_BRACE, TOP_RIGHT_CORNER, true);
             // add header
             buffer.push_bytes(&header);
+            push_header_data_row!();
+
+            // only put the separator if there are rows under
+            if input_iterator.peek().is_some() {
+                buffer.push_bytes(&standard_separator);
+            }
         }
 
-        let standard_separator = create_sep_row(&standard_horizontal_separators, LEFT_BRACE, MIDDLE_BRACE, RIGHT_BRACE, true);
         let footer = create_sep_row(&standard_horizontal_separators, BOTTOM_LEFT_CORNER, BOTTOM_BRACE, BOTTOM_RIGHT_CORNER, false);
 
         loop {
