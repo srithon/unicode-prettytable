@@ -26,6 +26,14 @@ const TOP_RIGHT_CORNER_HEADER: &str = "\u{2555}"; // ╕
 const BOTTOM_RIGHT_CORNER: &str = "\u{2518}"; // ┘
 const BOTTOM_LEFT_CORNER: &str = "\u{2514}"; // └
 
+/// Creates a list of byte vectors corresponding to each string of horizontal separators
+fn generate_horizontal_separators(column_widths: &Vec<usize>, horizontal_char: &str) -> Vec<Vec<u8>> {
+    column_widths
+        .iter()
+        .map(|&length| horizontal_char.repeat(length).into_bytes())
+        .collect::<Vec<_>>()
+}
+
 fn get_column_widths<'a, T: 'a>(input: &Vec<Vec<T>>) -> Vec<usize>
 where
     T: AsRef<str>,
@@ -91,13 +99,7 @@ where
     // fill string with spaces
     let mut buffer = StringBuffer::with_capacity_fill(string_length, ' ');
 
-    let horizontal_separators = {
-        let horizontal_separator: String = HORIZONTAL.to_string();
-        column_widths
-            .iter()
-            .map(|&length| horizontal_separator.repeat(length).into_bytes())
-            .collect::<Vec<_>>()
-    };
+    let horizontal_separators = generate_horizontal_separators(&column_widths, HORIZONTAL);
 
     let create_sep_row = |left_char, middle_char, right_char, newline| {
         let mut sep_buffer = {
