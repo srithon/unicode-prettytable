@@ -35,34 +35,62 @@ fn generate_horizontal_separators(column_widths: &Vec<usize>, horizontal_char: &
 }
 
 /// Given a 2D input, returns the minimum width of each column in a vector
-fn get_column_widths<'a, T: 'a>(input: &Vec<Vec<T>>) -> Vec<usize>
+fn get_column_widths<'a, T: 'a>(input: &Vec<Vec<T>>, center_headers: bool) -> Vec<usize>
 where
     T: AsRef<str>,
     &'a T: AsRef<str>
 {
-    let num_columns = {
+    let header_widths: Vec<usize> = {
         if let Some(row) = input.get(0) {
-            row.len()
+            let header_padding = {
+                if center_headers {
+                    2
+                }
+                else {
+                    0
+                }
+            };
+
+            row.iter().map(|entry| entry.as_ref().len() + header_padding).collect()
         }
         else {
             return Vec::new();
         }
     };
 
-    input
+    let mut widths = input
     .iter()
     .map(|row| row
         .into_iter()
         .map(|entry| entry.as_ref().len())
     )
-    .fold(vec![0; num_columns], |mut column_widths, row| {
+    .skip(1)
+    .fold(header_widths.clone(), |mut column_widths: Vec<usize>, row| {
         for (a, b) in column_widths.iter_mut().zip(row) {
             // if b is bigger than the current column width, set the new column width to b
             *a = b.max(*a);
         }
 
         column_widths
-    })
+    });
+
+    if center_headers {
+        // make sure that header has an even number of spaces on either side
+        for (col_width, header_width) in widths.iter_mut().zip(header_widths.into_iter()) {
+            let num_spaces = *col_width - header_width;
+
+            // let there be a space on either side
+            if num_spaces == 0 {
+                *col_width += 2;
+            }
+            // make it an even number of spaces
+            else if num_spaces % 2 == 1 {
+                *col_width += 1;
+            }
+        }
+    }
+
+    widths
 }
 
 /// Given a 2D vector of (coercable) str's, returns a string representing the data in a table
