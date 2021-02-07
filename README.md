@@ -14,27 +14,27 @@ fn main() {
         vec!["oh hello there", "hello there", "hello"],
     ];
 
-    // treats first row as fancy header
-    println!("{}\n", table_to_string(input.clone(), true));
+    // treats first row as fancy header with each header centered within the column
+    println!("{}\n", table_to_string(input.clone(), true, true));
 
-    // does not treat first row as fancy header
-    println!("{}", table_to_string(input, false));
+    // does not treat first row as fancy header and does not center header text
+    println!("{}", table_to_string(input, false, false));
 }
 ```
 
 The code above outputs
 ```
-╒══════════════╤══════════════╤═══════════╕
-│oh hello there│hello there   │hello      │
-╞══════════════╪══════════════╪═══════════╡
-│hello there   │oh hello there│hello      │
-├──────────────┼──────────────┼───────────┤
-│oh hello there│hello         │hello there│
-├──────────────┼──────────────┼───────────┤
-│oh hello there│hello there   │hello      │
-├──────────────┼──────────────┼───────────┤
-│oh hello there│hello there   │hello      │
-└──────────────┴──────────────┴───────────┘
+╒══════════════════╤═══════════════╤═══════════╕
+│  oh hello there  │  hello there  │   hello   │
+╞══════════════════╪═══════════════╪═══════════╡
+│hello there       │oh hello there │hello      │
+├──────────────────┼───────────────┼───────────┤
+│oh hello there    │hello          │hello there│
+├──────────────────┼───────────────┼───────────┤
+│oh hello there    │hello there    │hello      │
+├──────────────────┼───────────────┼───────────┤
+│oh hello there    │hello there    │hello      │
+└──────────────────┴───────────────┴───────────┘
 
 ┌──────────────┬──────────────┬───────────┐
 │oh hello there│hello there   │hello      │
