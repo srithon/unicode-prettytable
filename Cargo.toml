@@ -1,20 +1,2 @@
-[package]
-name = "unicode-prettytable"
-version = "0.3.0"
-authors = ["Sridaran Thoniyil <sri7thon@gmail.com>"]
-edition = "2018"
-description = "Table formatting library using Unicode Box-drawing characters"
-repository = "https://github.com/srithon/unicode-prettytable"
-license = "MIT OR Apache-2.0"
-keywords = ["unicode", "format", "library"]
-categories = ["value-formatting"]
-include = [
-  "**/*.rs",
-  "Cargo.toml"
-]
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-[dependencies]
-derive_builder = "~0.9.0"
-
+[workspace]
+members = ["crates/*"]
