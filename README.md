@@ -3,6 +3,8 @@ Rust table formatting library using Unicode Box-drawing characters.
 [![Crates.io](https://img.shields.io/crates/v/unicode-prettytable)](https://crates.io/crates/unicode-prettytable)
 [![docs.rs](https://img.shields.io/docsrs/unicode-prettytable)](https://docs.rs/unicode-prettytable)
 
+**NOTE**: the version that was previously `1.0.0` has become `0.3.0`.
+
 ## Example usage
 
 ```rust
