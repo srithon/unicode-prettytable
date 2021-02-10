@@ -1,6 +1,6 @@
 [package]
 name = "unicode-prettytable"
-version = "1.0.0"
+version = "0.3.0"
 authors = ["Sridaran Thoniyil <sri7thon@gmail.com>"]
 edition = "2018"
 description = "Table formatting library using Unicode Box-drawing characters"
