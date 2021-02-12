@@ -1,0 +1,15 @@
+[package]
+name = "unicode-prettytable-cli"
+version = "0.1.0"
+authors = ["Sridaran Thoniyil <sri7thon@gmail.com>"]
+edition = "2018"
+description = "Command-line tool for creating tables using Unicode Box-drawing characters"
+repository = "https://github.com/srithon/unicode-prettytable"
+license = "MIT OR Apache-2.0"
+keywords = ["unicode", "format", "table"]
+categories = ["command-line-utilities", "value-formatting"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+unicode-prettytable = { path = "../unicode_prettytable" }

@@ -1,2 +1,2 @@
 [workspace]
-members = ["unicode_prettytable"]
+members = ["unicode_prettytable", "unicode_prettytable_cli"]
