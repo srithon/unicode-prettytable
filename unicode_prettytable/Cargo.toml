@@ -6,7 +6,7 @@ edition = "2018"
 description = "Table formatting library using Unicode Box-drawing characters"
 repository = "https://github.com/srithon/unicode-prettytable"
 license = "MIT OR Apache-2.0"
-keywords = ["unicode", "format", "library"]
+keywords = ["unicode", "format", "library", "table"]
 categories = ["value-formatting"]
 include = [
   "**/*.rs",
