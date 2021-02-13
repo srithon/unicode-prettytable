@@ -75,27 +75,22 @@ where
     }
 
     /// Given a 2D input, returns the minimum width of each column in a vector
-    fn get_column_widths(&self) -> Vec<usize>
+    fn get_column_widths(&self, header_columns: &Vec<T>, row_offset: usize) -> Vec<usize>
     where
         T: AsRef<str>,
         &'a T: AsRef<str>
     {
         let header_widths: Vec<usize> = {
-            if let Some(row) = self.rows.get(0) {
-                let header_padding = {
-                    if self.header.centered_text {
-                        2
-                    }
-                    else {
-                        0
-                    }
-                };
+            let header_padding = {
+                if self.header.centered_text {
+                    2
+                }
+                else {
+                    0
+                }
+            };
 
-                row.iter().map(|entry| entry.as_ref().len() + header_padding).collect()
-            }
-            else {
-                return Vec::new();
-            }
+            header_columns.iter().map(|entry| entry.as_ref().len() + header_padding).collect()
         };
 
         let mut widths = self.rows
@@ -104,7 +99,10 @@ where
                 .into_iter()
                 .map(|entry| entry.as_ref().len())
             )
-            .skip(1)
+            // doesn't waste time looking at the first row if header_columns is pointing to
+            // self.rows
+            // then, header_widths would have already factored it in
+            .skip(row_offset)
             .fold(header_widths.clone(), |mut column_widths: Vec<usize>, row| {
                 for (a, b) in column_widths.iter_mut().zip(row) {
                     // if b is bigger than the current column width, set the new column width to b
