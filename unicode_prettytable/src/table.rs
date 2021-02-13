@@ -32,12 +32,20 @@ const TOP_RIGHT_CORNER_HEADER: &str = "\u{2555}"; // ╕
 const BOTTOM_RIGHT_CORNER: &str = "\u{2518}"; // ┘
 const BOTTOM_LEFT_CORNER: &str = "\u{2514}"; // └
 
-pub struct Header {
 #[derive(Builder, Clone, SmartDefault)]
+pub struct Header<'a, T>
+where
+    T: AsRef<str>,
+    &'a T: AsRef<str>
+{
     /// Whether to use double bar Unicode characters surrounding the header
     double_bar: bool,
     /// Whether to center the header text within each column
     centered_text: bool,
+    /// Use a separate set of columns for the header
+    /// Otherwise, the header will automatically use the first row in the table input
+    #[builder(setter(strip_option), default)]
+    columns: Option<&'a Vec<T>>
 }
 
 #[derive(Builder)]
@@ -48,7 +56,7 @@ where
 {
     /// If you provide header settings, the first row will be treated as headers
     #[builder(default)]
-    header: Header,
+    header: Header<'a, T>,
     /// Rows holding the data
     rows: &'a Vec<Vec<T>>,
 }
