@@ -138,7 +138,20 @@ where
     &'a T: AsRef<str>,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let column_widths = self.get_column_widths();
+        let (header, row_offset) = {
+            if let Some(columns) = self.header.columns {
+                (columns, 0)
+            }
+            else if let Some(columns) = self.rows.get(0) {
+                (columns, 1)
+            }
+            else {
+                // returns an error when there are no rows
+                return Err(fmt::Error::default());
+            }
+        };
+
+        let column_widths = self.get_column_widths(&header, row_offset);
 
         let total_width_per_row = {
             // one separator to the left of each one, as well as one separator on the very right
@@ -198,11 +211,11 @@ where
             sep_buffer.into_buffer()
         };
 
-        let mut input_iterator = self.rows.iter().peekable();
+        let mut input_iterator = self.rows.iter().skip(row_offset).peekable();
 
         macro_rules! push_data_row {
-            ($col_formatter:expr) => {
-                if let Some(row) = input_iterator.next() {
+            ($row_yielder:expr, $col_formatter:expr) => {
+                if let Some(row) = $row_yielder {
                     buffer.push_chars(VERTICAL);
                     for (col_index, col) in row.into_iter().enumerate() {
                         let base = col.as_ref();
@@ -213,6 +226,10 @@ where
 
                     buffer.push_chars("\n");
                 }
+            };
+            // overload that defaults to using input_iterator
+            ($col_formatter:expr) => {
+                push_data_row!(input_iterator.next(), $col_formatter)
             }
         }
 
@@ -222,10 +239,10 @@ where
             () => (
                 if self.header.centered_text {
                     // align header text in the center of each column
-                    push_data_row!(|base_str, width| format!("{:^width$}", base_str, width = width));
+                    push_data_row!(Some(header), |base_str, width| format!("{:^width$}", base_str, width = width));
                 }
                 else {
-                    push_data_row!(|base_str, _| base_str);
+                    push_data_row!(Some(header), |base_str, _| base_str);
                 }
             )
         }
