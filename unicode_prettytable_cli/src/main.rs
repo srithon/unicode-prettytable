@@ -1,5 +1,8 @@
 use unicode_prettytable::*;
 
-fn main() {
+mod cli;
 
+fn main() {
+    let cli = cli::create_cli();
+    let matches = cli.get_matches();
 }
