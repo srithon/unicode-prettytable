@@ -13,3 +13,4 @@ categories = ["command-line-utilities", "value-formatting"]
 
 [dependencies]
 unicode-prettytable = { path = "../unicode_prettytable" }
+clap = "2.33"
