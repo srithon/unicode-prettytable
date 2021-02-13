@@ -3,6 +3,9 @@ use crate::util::StringBuffer;
 use std::fmt;
 use derive_builder::Builder;
 
+// regular derive(Default) requires T: Default for Option<T>
+use smart_default::SmartDefault;
+
 // https://www.unicode.org/charts/PDF/U2500.pdf
 const VERTICAL: &str = "\u{2502}"; // │
 
@@ -29,8 +32,8 @@ const TOP_RIGHT_CORNER_HEADER: &str = "\u{2555}"; // ╕
 const BOTTOM_RIGHT_CORNER: &str = "\u{2518}"; // ┘
 const BOTTOM_LEFT_CORNER: &str = "\u{2514}"; // └
 
-#[derive(Builder, Clone, Default)]
 pub struct Header {
+#[derive(Builder, Clone, SmartDefault)]
     /// Whether to use double bar Unicode characters surrounding the header
     double_bar: bool,
     /// Whether to center the header text within each column
