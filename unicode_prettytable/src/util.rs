@@ -56,13 +56,13 @@ impl StringBuffer {
     }
 
     /// Convenience function for using [push_bytes](StringBuffer::push_bytes) with string slices
-    pub fn push_chars(&mut self, c: &str) {
-        self.push_bytes(c.as_bytes())
+    pub fn push_chars(&mut self, c: impl AsRef<str>) {
+        self.push_bytes(c.as_ref().as_bytes())
     }
 
     /// Convenience function for using [push_bytes_fixed_width](StringBuffer::push_bytes_fixed_width) with string slices
-    pub fn push_chars_fixed_width(&mut self, c: &str, num_chars: usize) {
-        self.push_bytes_fixed_width(c.as_bytes(), num_chars)
+    pub fn push_chars_fixed_width(&mut self, c: impl AsRef<str>, num_chars: usize) {
+        self.push_bytes_fixed_width(c.as_ref().as_bytes(), num_chars)
     }
 
     /// Consumes the StringBuffer and returns the internal byte buffer
