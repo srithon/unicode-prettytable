@@ -90,14 +90,14 @@ where
                 }
             };
 
-            header_columns.iter().map(|entry| entry.as_ref().len() + header_padding).collect()
+            header_columns.iter().map(|entry| entry.as_ref().chars().count() + header_padding).collect()
         };
 
         let mut widths = self.rows
             .iter()
             .map(|row| row
                 .into_iter()
-                .map(|entry| entry.as_ref().len())
+                .map(|entry| entry.as_ref().chars().count())
             )
             // doesn't waste time looking at the first row if header_columns is pointing to
             // self.rows
