@@ -220,7 +220,7 @@ where
                     for (col_index, col) in row.into_iter().enumerate() {
                         let base = col.as_ref();
 
-                        buffer.push_chars_fixed_width($col_formatter(base, column_widths[col_index]).as_ref(), column_widths[col_index]);
+                        buffer.push_chars_fixed_width($col_formatter(base, column_widths[col_index]), column_widths[col_index]);
                         buffer.push_chars(VERTICAL);
                     }
 
